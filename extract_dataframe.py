@@ -76,6 +76,7 @@ class TweetDfExtractor:
               screen_name.append(i['user']['screen_name'])
             except KeyError:
                 screen_name.append(None)
+        return screen_name
 
     def find_followers_count(self)->list:
         followers_count = [x['user']['followers_count']
@@ -88,18 +89,19 @@ class TweetDfExtractor:
         return friends_count
 
     def is_sensitive(self)->list:
-        try:
-            is_sensitive = [x['possibly_sensitive'] for x in self.tweets_list]
-        except KeyError:
-            is_sensitive = None
+        is_sensitive = []
+        for i in self.tweets_list:
+            try:
+                is_sensitive.append(i['possibly_sensitive'])
+            except KeyError:
+                is_sensitive.append(None)
 
         return is_sensitive
 
     def find_favourite_count(self)->list:
-          try:
+        try:
             favourite_count = [x['retweeted_status']['favorite_count']
                            for x in self.tweets_list]
-
         except KeyError:
             favourite_count = [None for x in self.tweets_list]
 
@@ -126,13 +128,16 @@ class TweetDfExtractor:
             try:
               mentions.append(i['entities']['user_mentions'])
             except KeyError:
-                screen_name.append(None)
+                mentions.append(None)
+        return mentions
 
     def find_location(self)->list:
-        try:
-            location = self.tweets_list['user']['location']
-        except TypeError:
-            location = ''
+        location = []
+        for i in self.tweets_list:
+            try:
+                location.append(i['user']['location'])
+            except TypeError:
+                location.append(None)
         
         return location
 
