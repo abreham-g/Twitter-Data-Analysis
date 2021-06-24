@@ -1,6 +1,6 @@
 # Twitter-Data-Analysis
 
-### this will explain how I complete My Task
+### this is how I complete My Task
 
 I Forked repository to my github account
 I Created a branch called “fix_bug” to fix the bugs in the fix_clean_tweets_dataframe.py and fix_extract_dataframe.py 
