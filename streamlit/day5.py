@@ -15,7 +15,7 @@ def loadData():
 
 def selectHashTag():
     df = loadData()
-    hashTags = st.multiselect("choose combaniation of hashtags", list(df['hashtags'].unique()))
+    hashTags = st.multiselect("choose combination of hashtags", list(df['hashtags'].unique()))
     if hashTags:
         df = df[np.isin(df, hashTags).any(axis=1)]
         st.write(df)
@@ -86,7 +86,10 @@ def langPie():
         st.write(dfLangCount)
 
 
-st.title("Data Display")
+st.sidebar.title("Twitter-Data-Analysis")
+option = st.sidebar.selectbox('select result',('Data','Data Visualization'))
+st.title(option)
+
 selectHashTag()
 st.markdown("<p style='padding:10px; background-color:#000000;color:#00ECB9;font-size:16px;border-radius:10px;'>Section Break</p>", unsafe_allow_html=True)
 selectLocAndAuth()
