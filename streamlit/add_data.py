@@ -17,7 +17,7 @@ def DBConnect(dbName=None):
     """
     conn = mysql.connect(host='localhost',
                          user='root',
-                         password="",
+                         password="Abrilow@13",
                          database=dbName,
                          auth_plugin='mysql_native_password',
                          buffered=True
