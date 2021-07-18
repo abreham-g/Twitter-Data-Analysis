@@ -103,16 +103,19 @@ def preprocess_df(df: pd.DataFrame) -> pd.DataFrame:
     -------
 
     """
-    cols_2_drop = ['Unnamed: 0', 'timestamp', 'sentiment', 'possibly_sensitive', 'original_text']
+    cols_2_drop = ['Nb of sec with 125000B < Vol DL','Nb of sec with 6250B < Vol UL < 37500B','Nb of sec with 125000B < Vol DL',
+                   'TCP UL Retrans. Vol (Bytes)','Nb of sec with 31250B < Vol DL < 125000B','Nb of sec with 6250B < Vol DL < 31250B',
+                    'TCP DL Retrans. Vol (Bytes)','HTTP UL (Bytes)']
+    
     try:
         df = df.drop(columns=cols_2_drop, axis=1)
         df = df.fillna(0)
     except KeyError as e:
         print("Error:", e)
     try:
-        df['favorite_count'] = df['favorite_count'].fillna(0)
-        df['possibly_sensitive'] = df['possibly_sensitive'].fillna('not defined')
-        df['place'] = df['place'].fillna('not defined')
+        df['Nb of sec with 125000B < Vol DL'] = df['Nb of sec with 125000B < Vol DL'].fillna(0)
+        df['Nb of sec with 6250B < Vol UL < 37500B'] = df['Nb of sec with 6250B < Vol UL < 37500B'].fillna('not defined')
+        df['HTTP UL (Bytes)'] = df['HTTP UL (Bytes)'].fillna('not defined')
     except KeyError as e:
         print("Error:", e)
 
@@ -152,10 +155,15 @@ def insert_to_tweet_table(dbName: str, df: pd.DataFrame, table_name: str) -> Non
     df = preprocess_df(df)
 
     for _, row in df.iterrows():
-        sqlQuery = f"""INSERT INTO {table_name} (created_at, source, original_text, polarity, subjectivity, lang,
-                    favorite_count, original_author, followers_count, friends_count, possibly_sensitive,
-                    hashtags, user_mentions, place, clean_text)
-             VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        sqlQuery = f"""INSERT INTO {table_name} (Avg RTT DL (ms) , Avg RTT UL (ms), Last Location Name, MSISDN/Number, Bearer Id, Nb of sec with Vol UL < 1250B,
+                    10 Kbps < UL TP < 50 Kbps (%), UL TP > 300 Kbps (%) , 50 Kbps < UL TP < 300 Kbps (%), UL TP < 10 Kbps (%), Nb of sec with Vol DL < 6250B ,
+                    250 Kbps < DL TP < 1 Mbps (%), 50 Kbps < DL TP < 250 Kbps (%)  , DL TP < 50 Kbps (%), DL TP > 1 Mbps (%),Handset Type,Handset Manufacturer,IMEI,IMSI,
+                    Dur. (ms),Social Media UL (Bytes),Google DL (Bytes),Google UL (Bytes)
+                    Email DL (Bytes),Email UL (Bytes),Youtube DL (Bytes),Youtube UL (Bytes),Netflix DL (Bytes),
+                    Netflix UL (Bytes),Gaming DL (Bytes),Gaming UL (Bytes),Other DL (Bytes),Other UL (Bytes),Total UL (Bytes),
+                    Total DL (Bytes))
+             VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s,%s,%s,%s,%s,%s,%s,
+             %s, %s, %s, %s, %s, %s,%s,%s,%s,%s,%s,%s,%s);"""
         data = (row[0], row[1], row[2], row[3], (row[4]), (row[5]), row[6], row[7], row[8], row[9], row[10], row[11],
                 row[12], row[13], row[14])
 
@@ -218,12 +226,12 @@ def db_execute_fetch(*args, many=False, tablename='', rdf=True, **kwargs) -> pd.
 
 
 if __name__ == "__main__":
-    createDB(dbName='tweets')
-    emojiDB(dbName='tweets')
-    createTables(dbName='tweets')
+    createDB(dbName='tellco')
+    emojiDB(dbName='tellco')
+    createTables(dbName='tellco')
 
-    df = pd.read_csv('tweet_cleand_Data.csv')
+    df = pd.read_csv('../data/clean.csv')
     
-    insert_to_tweet_table(dbName='tweets', df=df, table_name='TweetInformation')
+    insert_to_tweet_table(dbName='tellco', df=df, table_name='TellcoInformation')
     print(df.isna().sum())
    
